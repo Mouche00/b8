@@ -1,8 +1,10 @@
 <?php
 
-    require_once(__DIR__ . "/../services/BankService.php");
-    require_once(__DIR__ . "/../models/Bank.php");
-    require_once(__DIR__ . "/../models/Datatable.php");
+    require("../config/config.php");
+
+    require(APPROOT . "app/models/Bank.php");
+    require(APPROOT . "app/models/Datatable.php");
+    require(APPROOT . "app/services/BankService.php");
 
     $service = new BankService();
 

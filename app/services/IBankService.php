@@ -4,7 +4,7 @@
         function create(Bank $bank);
         function update(Bank $bank);
         function delete($id);
-        function read();
+        function read(Datatable $datatable);
         function search($id);
     }
 

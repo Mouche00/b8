@@ -7,7 +7,7 @@ $(document).ready(function() {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'../app/controllers/bank.php'
+            'url': URLROOT + 'app/controllers/bankController.php'
         },
         'columns': [
             { data: 'id' },
@@ -15,7 +15,7 @@ $(document).ready(function() {
             { data: 'logo',
 
                 render : function(data, type, row) {
-                    return '<img class="rendered-logo max-h-5 max-h-10 m-auto border-2 border-black rounded transition ease-in-out delay-15" src="../public/uploads/' + data + '" alt="">'
+                    return '<img class="rendered-logo max-h-5 max-h-10 m-auto border-2 border-black rounded transition ease-in-out delay-15" src="' + URLROOT + 'public/uploads/' + data + '" alt="">'
                 } 
             },
             { data: 'id',
@@ -29,6 +29,8 @@ $(document).ready(function() {
 
     table.draw();
     $('#table').css("width", "100%");
+
+    /*
 
     $(document).on({
         mouseenter: function(){
@@ -52,11 +54,13 @@ $(document).ready(function() {
         }
     }, ".rendered-logo");
 
+    */
+
     $(document).on('click', '.delete', function(){
         let id = $(this).data('id');
         // $row = $(this).parents("tr");
         $.ajax({
-            url: '../app/controllers/bank.php',
+            url: URLROOT + 'app/controllers/bankController.php',
             type: 'GET',
             data: {
                 'delete': 1,
@@ -94,7 +98,7 @@ $(document).ready(function() {
         console.log(formData.get('name'));
         formData.append('add', 1);
         $.ajax({
-            url: '../app/controllers/bank.php',
+            url: URLROOT + 'app/controllers/bankController.php',
             type: 'POST',
             data: formData,
             contentType: false,
@@ -119,7 +123,7 @@ $(document).ready(function() {
     $(document).on('click', '.edit', function(){
         let id = $(this).data('id');
         $.ajax({
-            url: '../app/controllers/bank.php',
+            url: URLROOT + 'app/controllers/bankController.php',
             type: 'GET',
             data: {
                 'edit': 1,
@@ -147,7 +151,7 @@ $(document).ready(function() {
         let formData = new FormData(this);
         formData.append('edit', 1);
         $.ajax({
-            url: '../app/controllers/bank.php',
+            url: URLROOT + 'app/controllers/bankController.php',
             type: 'POST',
             data: formData,
             contentType: false,

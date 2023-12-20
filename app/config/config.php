@@ -5,8 +5,8 @@
     define("USER", "root");
     define("PASS", "root");
 
-    define("APPROOT", $_SERVER['REQUEST_URI'] . "/../../");
-    define("URLROOT", "http://localhost/b8/");
+    define("APPROOT", $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/b8/");
+    define("URLROOT", "http://localhost/~ycode/b8/");
 
 
 ?>

@@ -9,7 +9,7 @@
 
 <!--  HEAD  -->
 <head>
-    <?php include("components/head.html") ?>
+    <?php include("components/head.php") ?>
     <title>Banks</title>
 </head>
 <!--  HEAD  -->

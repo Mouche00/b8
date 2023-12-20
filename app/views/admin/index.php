@@ -11,7 +11,7 @@ require("components/check.php");
 
 <!--  HEAD  -->
 <head>
-    <?php include("components/head.html") ?>
+    <?php include("components/head.php") ?>
     <title>Admin Dashboard</title>
 </head>
 <!--  HEAD  -->
