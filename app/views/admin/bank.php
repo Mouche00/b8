@@ -2,7 +2,6 @@
 
     // require(__DIR__ ."/../../controllers/bank.php");
     require("components/check.php");
-    require(__DIR__ . "/../../config/config.php");
 
 
 

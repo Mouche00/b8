@@ -45,7 +45,7 @@
     <!-- <h1 class="text-4xl text-center">··········</h1> -->
     <section class="w-full mx-auto mt-10">
         <div class="w-[75%] h-12 mx-auto text-black bg-white rounded-lg">
-            <a href="../app/controllers/login.php?delete=1" class="w-[75%] h-full mx-auto flex justify-center items-center">
+            <a href="<?= URLROOT . 'app/controllers/loginController.php?logout=1'?>" class="w-[75%] h-full mx-auto flex justify-center items-center">
                 <!-- <h2 class="text-2xl font-extrabold mx-auto">LOGOUT</h2> -->
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </a>
