@@ -10,67 +10,14 @@
 <!--  HEAD  -->
 <head>
     <?php include("components/head.php") ?>
-    <title>Banks</title>
+    <title>Users</title>
 </head>
 <!--  HEAD  -->
 
 <body class="h-[100vh] w-full flex">
 
     <!--  SIDEBAR  -->
-    <aside class="h-full w-16 py-4 bg-black flex flex-col justify-between text-white">
-        <section class="w-[100%] mx-auto mb-10">
-            <img class="w-[80%] mx-auto" src="../public/assets/images/logo-white.png" alt="">
-            <!-- <h1 class="logo-text text-3xl text-center">Yamaguchi-gumi Bank</h1> -->
-        </section>
-        <!-- <h1 class="text-4xl text-center">··········</h1> -->
-        <section class="w-full mx-auto my-10">
-            <div class="w-full h-14 transition delay-100 hover:text-black hover:bg-white">
-                <a href="" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <i class="fa-solid fa-yen-sign text-3xl"></i>
-                    <!-- <h2 class="text-2xl font-extrabold">BANKS</h2> -->
-                </a>
-            </div>
-            <div class="w-full h-14 transition delay-100 hover:text-black hover:bg-white">
-                <a href="" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <i class="fa-solid fa-building text-3xl"></i>
-                    <!-- <h2 class="text-2xl font-extrabold">AGENCIES</h2> -->
-                </a>
-            </div>
-            <div class="w-full h-14 transition delay-100 hover:text-black hover:bg-white">
-                <a href="" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <i class="fa-solid fa-gears text-3xl"></i>
-                    <!-- <h2 class="text-2xl font-extrabold">ATMS</h2> -->
-                </a>
-            </div>
-            <div class="w-full h-14 transition delay-100 text-black bg-white">
-                <a href="" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <i class="fa-solid fa-person text-3xl"></i>
-                    <!-- <h2 class="text-2xl font-extrabold">USERS</h2> -->
-                </a>
-            </div>
-            <div class="w-full h-14 transition delay-100 hover:text-black hover:bg-white">
-                <a href="" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <i class="fa-solid fa-book text-3xl"></i>
-                    <!-- <h2 class="text-2xl font-extrabold">ACCOUNTS</h2> -->
-                </a>
-            </div>
-            <div class="w-full h-14 transition delay-100 hover:text-black hover:bg-white">
-                <a href="" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <i class="fa-solid fa-arrow-right-arrow-left text-3xl"></i>
-                    <!-- <h2 class="text-2xl font-extrabold">TRANSACTIONS</h2> -->
-                </a>
-            </div>
-        </section>
-        <!-- <h1 class="text-4xl text-center">··········</h1> -->
-        <section class="w-full mx-auto mt-10">
-            <div class="w-[75%] h-12 mx-auto text-black bg-white rounded-lg">
-                <a href="../app/controllers/login.php?delete=1" class="w-[75%] h-full mx-auto flex justify-center items-center">
-                    <!-- <h2 class="text-2xl font-extrabold mx-auto">LOGOUT</h2> -->
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                </a>
-            </div>
-        </section>
-    </aside>
+    <?php include("components/sidebar.php") ?>
     <!--  SIDEBAR  -->
 
     <!-- OVERLAY -->
@@ -155,7 +102,8 @@
         </form>
         
         <form id="edit-form" action="" method="post" class="w-[80%] h-[90%] flex flex-col justify-evenly" autocomplete="off" enctype="multipart/form-data">
-            <input class="bg-gray-300 rounded p-1" type="hidden" name="id" id="id">
+            <input class="bg-gray-300 rounded p-1" type="hidden" name="user-id" id="user-id">
+            <input class="bg-gray-300 rounded p-1" type="hidden" name="address-id" id="address-id">
             <div class="flex justify-between">
                 <div class="w-[100%] flex flex-col justify-evenly">
                     <label>Username:</label>
@@ -203,12 +151,20 @@
                 </div>
             </div>
             <div class="flex justify-between">
-                <div class="w-[100%] flex flex-col justify-evenly">
+                <div class="w-[35%] flex flex-col justify-evenly">
                     <label>Agency:</label>
                     <select class="bg-gray-300 rounded p-1" name="agency" id="agency">
                         <option value="1">1</option>
                     </select>
                 </div>
+                <div class="w-[35%] flex flex-col">
+                    <label>Role:</label>
+                    <select class="bg-gray-300 rounded p-1" name="role" id="role">
+                        <!-- <option id="admin" value="admin">admin</option>
+                        <option id="client" value="client">client</option> -->
+                    </select>
+                </div>
+                <div id="checkbox-wrapper" class="w-[20%] grid gap-1" style="grid-template-columns: repeat(2, 1fr);"></div>
             </div>
             <div class="flex flex-col">
                 <!-- <button id="edit" class="w-[30%] rounded m-auto bg-green-500 text-white p-1" type="button">SUBMIT</button>
@@ -219,7 +175,7 @@
     </section>
     <!-- FORM -->
 
-    <main class="w-[85%]">
+    <main class="w-[100%]">
 
         <!--  HEADER  -->
             <?php include("components/header.php") ?>
@@ -245,6 +201,6 @@
         </section>
     </main>
 </body>
-<script src="../public/assets/javascript/main.js"></script>
-<script src="../public/assets/javascript/user.js"></script>
+<script src=<?= URLROOT . "public/assets/javascript/main.js"?>></script>
+<script src=<?= URLROOT . "public/assets/javascript/user.js"?>></script>
 </html>

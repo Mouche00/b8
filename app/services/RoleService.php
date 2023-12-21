@@ -1,7 +1,7 @@
 <?php
 
     require("IRoleService.php");
-    require("Database.php");
+    // require("Database.php");
 
     class RoleService extends Database implements IRoleService {
 
@@ -40,6 +40,25 @@
             } catch (PDOException $e) {
                 die("Error: " . $e->getMessage());
             }
+        }
+
+        public function read(){
+
+            $db = $this->connect();
+            if ($db == null) {
+                return null;
+            }
+
+            $sql = "SELECT * FROM role";
+            $stmt = $db->query($sql);
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $db = null;
+            $stmt = null;
+
+            return $data;
+
+
         }
 
     }

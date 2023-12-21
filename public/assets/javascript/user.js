@@ -7,7 +7,7 @@ $(document).ready(function() {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'../app/controllers/user.php'
+            'url': URLROOT + 'app/controllers/userController.php'
         },
         'columns': [
             { data: 'id' },
@@ -54,11 +54,38 @@ $(document).ready(function() {
         });
     });
 
+    $("#edit-form #role").on("click", function(){
+        // console.log($(this).val());
+        let $html = $(`<input type="checkbox" name="checkbox" value="${$(this).val()}" id="checkbox" class="checkbox" checked>`);
+
+        $("#edit-form #checkbox-wrapper").append($html);
+
+        $html = $(`<label for="checkbox">${$(this).val()}</label>`);
+
+        $("#edit-form #checkbox-wrapper").append($html);
+
+        $(this).find(`#${$(this).val()}`).remove();
+
+
+
+        $(".checkbox").on("click", function(){
+
+            $(this).next().remove();
+            $(this).remove();
+            if(!$("#edit-form #role").find(`#${$(this).val()}`).length){
+                let $html = $(`<option value="${$(this).val()}" id="${$(this).val()}">${$(this).val()}</option>`);
+                $("#edit-form #role").append($html);
+            }
+
+
+        });
+    });
+
     $(document).on('click', '.delete', function(){
         let id = $(this).data('id');
         // $row = $(this).parents("tr");
         $.ajax({
-            url: '../app/controllers/user.php',
+            url: URLROOT + 'app/controllers/userController.php',
             type: 'GET',
             data: {
                 'delete': 1,
@@ -75,7 +102,7 @@ $(document).ready(function() {
 
     $(document).on('click', '#add', function(){
         $.ajax({
-            url: '../app/controllers/user.php',
+            url: URLROOT + 'app/controllers/userController.php',
             type: 'GET',
             data: {
                 'get': 1,
@@ -123,7 +150,7 @@ $(document).ready(function() {
         formData.append('add', 1);
         formData.append('checkboxes', checkboxData);
         $.ajax({
-            url: '../app/controllers/user.php',
+            url: URLROOT + 'app/controllers/userController.php',
             type: 'POST',
             data: formData,
             contentType: false,
@@ -163,7 +190,24 @@ $(document).ready(function() {
     $(document).on('click', '.edit', function(){
         let id = $(this).data('id');
         $.ajax({
-            url: '../app/controllers/user.php',
+            url: URLROOT + 'app/controllers/userController.php',
+            type: 'GET',
+            data: {
+                'get': 1,
+            },
+            success: function(response){
+                let data = JSON.parse(response);
+                data = jQuery.makeArray(data);
+                let html = "";
+                data.forEach(e => {
+                    html = "<option value=" + e.name + " id=" + e.name + ">" + e.name + "</option>";
+                    $("#edit-form #role").append(html);
+                });
+                console.log(data[1].name);
+            }
+        });
+        $.ajax({
+            url: URLROOT + 'app/controllers/userController.php',
             type: 'GET',
             data: {
                 'edit': 1,
@@ -176,7 +220,8 @@ $(document).ready(function() {
                 $("#overlay").addClass("opacity-50 z-10");
                 $("#form-wrapper").addClass("scale-100");
                 $('#add-form').addClass("hidden");
-                $('#edit-form #id').val(data['id']);
+                $('#edit-form #user-id').val(data['userId']);
+                $('#edit-form #address-id').val(data['addressId']);
                 $('#edit-form #username').val(data['username']);
                 $('#edit-form #nationality').val(data['nationality']);
                 $('#edit-form #gendre').val(data['gendre']);
@@ -187,8 +232,6 @@ $(document).ready(function() {
                 $('#edit-form #email').val(data['email']);
                 $('#edit-form #telephone').val(data['telephone']);
                 $('#edit-form #agency').val(data['agency_id']);
-                // role
-                $('#edit-form #role').val(data['name']);
 
             }
         });
@@ -199,10 +242,16 @@ $(document).ready(function() {
         // let id = $('#id').val();
         // let name = $('#name').val();
         // let logo = $('#logo').val();
+        checkboxes = jQuery.makeArray($(".checkbox"));
+        let checkboxData = [];
+        checkboxes.forEach(e => {
+            checkboxData.push(e.value);
+        });
         let formData = new FormData(this);
         formData.append('edit', 1);
+        formData.append('checkboxes', checkboxData);
         $.ajax({
-            url: '../app/controllers/user.php',
+            url: URLROOT + 'app/controllers/userController.php',
             type: 'POST',
             data: formData,
             contentType: false,
@@ -217,6 +266,8 @@ $(document).ready(function() {
                 $("#overlay").removeClass("opacity-50 z-10");
                 $('#edit-form').removeClass("hidden");
                 $('#add-form').removeClass("hidden");
+                $("#edit-form #checkbox-wrapper").empty();
+                $("#edit-form #role").empty();
             }
         });
     });

@@ -4,7 +4,7 @@
         <!-- <h1 class="logo-text text-3xl text-center">Yamaguchi-gumi Bank</h1> -->
     </section>
     <!-- <h1 class="text-4xl text-center">··········</h1> -->
-    <section class="w-full mx-auto my-10">
+    <section id="sidebar" class="w-full mx-auto my-10">
         <div id="bank" class="w-full h-14 transition delay-100 hover:text-black hover:bg-white">
             <a href="bank.php" class="w-[75%] h-full mx-auto flex justify-center items-center">
                 <i class="fa-solid fa-yen-sign text-3xl"></i>

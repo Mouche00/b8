@@ -8,9 +8,8 @@
         private $postalCode;
         private $email;
         private $telephone;
-        private $timestamp;
 
-        public function __construct($id, $city, $district, $street, $postalCode, $email, $telephone, $timestamp){
+        public function __construct($id, $city, $district, $street, $postalCode, $email, $telephone){
             $this->id = $id;
             $this->city = $city;
             $this->district = $district;
@@ -18,7 +17,6 @@
             $this->postal_code = $postalCode;
             $this->email = $email;
             $this->telephone = $telephone;
-            $this->timestamp = $timestamp;
         }
 
         public function __get($property) {

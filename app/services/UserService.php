@@ -39,7 +39,7 @@
 
                 $stmt->execute();
 
-                $sql = "INSERT INTO user VALUES (:id, :username, :password, :nationality, :gendre, :address_id, :agency_id)";
+                $sql = "INSERT INTO user VALUES (:id, :username, :password, :nationality, :gendre, :address_id, :agency_id, '0')";
 
                 $stmt = $db->prepare($sql);
 
@@ -101,7 +101,6 @@
                 $stmt->bindParam(":password", $password);
                 $stmt->bindParam(":nationality", $nationality);
                 $stmt->bindParam(":gendre", $gendre);
-                $stmt->bindParam(":address_id", $addressId);
                 $stmt->bindParam(":agency_id", $agencyId);
 
                 $stmt->execute();
@@ -121,30 +120,122 @@
                 $stmt->bindParam(":id", $id);
 
                 $stmt->execute();
+
+                $sql = "DELETE FROM address
+                        JOIN user ON user.address_id = address.id
+                        WHERE user.id = :id";
+
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(":id", $id);
+
+                $stmt->execute();
             } catch (PDOException $e) {
                 die("Error: " . $e->getMessage());
             }
 
         }
 
-        public function read(){
+        public function read(Datatable $datatable){
+            
             $db = $this->connect();
 
+            $searchArray = array();
+            $searchQuery = " ";
+
+
+            $draw = $datatable->draw;
+            $row = $datatable->row;
+            $rowPerPage = $datatable->rowPerPage;
+            $columnName = $datatable->columnName;
+            $columnSortOrder = $datatable->columnSortOrder;
+            $searchValue = $datatable->searchValue;
+
+            if($searchValue != ''){
+                $searchQuery = " AND (user.id LIKE :id OR 
+                    username LIKE :username OR
+                    nationality LIKE :nationality OR
+                    gendre LIKE :gendre OR
+                    role.name LIKE :role) ";
+                $searchArray = array( 
+                        'id'=>"%$searchValue%",
+                        'username'=>"%$searchValue%",
+                        'nationality'=>"%$searchValue%",
+                        'gendre'=>"%$searchValue%",
+                        'role'=>"%$searchValue%"
+                );
+            }
+    
             try {
-                $sql = "SELECT user.id, user.username, user.agency_id, address.email, role.name AS role FROM user
+                $stmt = $db->prepare("SELECT COUNT(*) AS allcount FROM user ");
+                $stmt->execute();
+                $records = $stmt->fetch();
+                $totalRecords = $records['allcount'];
+            
+                $stmt = $db->prepare("SELECT COUNT(*) AS allcount FROM user WHERE 1 ".$searchQuery);
+                $stmt->execute($searchArray);
+                $records = $stmt->fetch();
+                $totalRecordwithFilter = $records['allcount'];
+
+                $stmt = $db->prepare("SELECT user.id, user.username, user.nationality, user.gendre, role.name FROM user
                 JOIN roleOfUser ON user.id = roleOfUser.user_id
                 JOIN role ON roleOfUser.role_id = role.name
-                JOIN address ON user.address_id = address.id
-                WHERE deleted = 0";
+                WHERE 1 ".$searchQuery." ORDER BY ".$columnName." ".$columnSortOrder." LIMIT :limit,:offset");
 
-                $data = $db->query($sql);
+                foreach ($searchArray as $key=>$search) {
+                    $stmt->bindValue(':'.$key, $search,PDO::PARAM_STR);
+                }
 
-                return $data->fetchAll(PDO::FETCH_ASSOC);
-                
-            } catch (PDOException $e) {
+                $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', (int)$rowPerPage, PDO::PARAM_INT);
+                $stmt->execute();
+                $records = $stmt->fetchAll();
+
+            } catch (PDOException $e){
                 die("Error: " . $e->getMessage());
             }
 
+            $data = array();
+
+            foreach ($records as $row) {
+                $data[] = array(
+                    "id"=>$row['id'],
+                    "username"=>$row['username'],
+                    "nationality"=>$row['nationality'],
+                    "gendre"=>$row['gendre'],
+                    "role"=>$row['name'],
+                );
+            }
+
+            // Response
+            $response = array(
+                "draw" => intval($draw),
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecordwithFilter,
+                "aaData" => $data
+            );
+
+            return $response;
+        }
+
+        public function search($id){
+            $db = $this->connect();
+
+            try {
+                $sql = "SELECT user.id AS userId, user.username, user.nationality, user.gendre, user.agency_id,
+                        address.id AS addressId, address.city, address.district, address.street, address.postal_code, address.email, address.telephone FROM user
+                        JOIN address ON user.address_id = address.id
+                        WHERE user.id = :id";
+
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(":id", $id);
+
+                $stmt->execute();
+
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+
+            } catch (PDOException $e) {
+                die("Error: " . $e->getMessage());
+            }
         }
 
     }
