@@ -7,7 +7,7 @@ $(document).ready(function() {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'../app/controllers/account.php'
+            'url': URLROOT + 'app/controllers/accountController.php'
         },
         'columns': [
             { data: 'id' },
@@ -31,7 +31,7 @@ $(document).ready(function() {
         let id = $(this).data('id');
         // $row = $(this).parents("tr");
         $.ajax({
-            url: '../app/controllers/account.php',
+            url: URLROOT + 'app/controllers/accountController.php',
             type: 'GET',
             data: {
                 'delete': 1,
@@ -48,19 +48,19 @@ $(document).ready(function() {
 
     $(document).on('click', '#add', function(){
         $.ajax({
-            url: '../app/controllers/account.php',
+            url: URLROOT + 'app/controllers/accountController.php',
             type: 'GET',
             data: {
                 'get': 1,
             },
             success: function(response){
-                // let data = JSON.parse(response);
-                // data = jQuery.makeArray(data);
-                // let html = "";
-                // data.forEach(e => {
-                //     html = "<option value=" + e.id + " id=" + e.id + ">" + e.username + "</option>";
-                //     $("#role").append(html);
-                // });
+                let data = JSON.parse(response);
+                data = jQuery.makeArray(data);
+                let html = "";
+                data.forEach(e => {
+                    html = "<option value=" + e.id + " id=" + e.id + ">" + e.username + "</option>";
+                    $("#user_id").append(html);
+                });
                 console.log(response);
             }
         });
@@ -86,7 +86,7 @@ $(document).ready(function() {
         console.log(this);
         formData.append('add', 1);
         $.ajax({
-            url: '../app/controllers/account.php',
+            url: URLROOT + 'app/controllers/accountController.php',
             type: 'POST',
             data: formData,
             contentType: false,
@@ -113,7 +113,7 @@ $(document).ready(function() {
     $(document).on('click', '.edit', function(){
         let id = $(this).data('id');
         $.ajax({
-            url: '../app/controllers/account.php',
+            url: URLROOT + 'app/controllers/accountController.php',
             type: 'GET',
             data: {
                 'edit': 1,
@@ -136,7 +136,7 @@ $(document).ready(function() {
         });
 
         $.ajax({
-            url: '../app/controllers/account.php',
+            url: URLROOT + 'app/controllers/accountController.php',
             type: 'GET',
             data: {
                 'get': 1,
@@ -162,7 +162,7 @@ $(document).ready(function() {
         let formData = new FormData(this);
         formData.append('edit', 1);
         $.ajax({
-            url: '../app/controllers/account.php',
+            url: URLROOT + 'app/controllers/accountController.php',
             type: 'POST',
             data: formData,
             contentType: false,

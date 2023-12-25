@@ -1,7 +1,7 @@
 <?php
 
     require("IUserService.php");
-    require("Database.php");
+    
 
     class UserService extends Database implements IUserService {
 
@@ -154,14 +154,12 @@
                 $searchQuery = " AND (user.id LIKE :id OR 
                     username LIKE :username OR
                     nationality LIKE :nationality OR
-                    gendre LIKE :gendre OR
-                    role.name LIKE :role) ";
+                    gendre LIKE :gendre) ";
                 $searchArray = array( 
                         'id'=>"%$searchValue%",
                         'username'=>"%$searchValue%",
                         'nationality'=>"%$searchValue%",
-                        'gendre'=>"%$searchValue%",
-                        'role'=>"%$searchValue%"
+                        'gendre'=>"%$searchValue%"
                 );
             }
     
@@ -236,6 +234,25 @@
             } catch (PDOException $e) {
                 die("Error: " . $e->getMessage());
             }
+        }
+
+        public function display(){
+
+            $db = $this->connect();
+            if ($db == null) {
+                return null;
+            }
+
+            $sql = "SELECT * FROM user";
+            $stmt = $db->query($sql);
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $db = null;
+            $stmt = null;
+
+            return $data;
+
+
         }
 
     }

@@ -1,9 +1,9 @@
 <?php
 
 interface IAccountService {
-    public function create(Account $account);
-    public function update(Account $account);
-    public function read();
+    public function create(CheckingAccount $account);
+    public function update(CheckingAccount $account);
+    public function read(Datatable $datatable);
     public function delete($id);
 
 }

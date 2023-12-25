@@ -1,7 +1,7 @@
 <?php
 
     require("IBankService.php");
-    require("Database.php");
+    
 
     class BankService extends Database implements IBankService {
 

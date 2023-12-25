@@ -1,7 +1,7 @@
 <?php
 
     require("ILoginService.php");
-    require("Database.php");
+    
 
     class LoginService extends Database implements ILoginService {
 

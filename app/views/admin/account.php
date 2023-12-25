@@ -18,7 +18,7 @@
 <body class="h-[100vh] w-full flex">
 
     <!--  SIDEBAR  -->
-    <?php include("components/sidebar.html") ?>
+    <?php include("components/sidebar.php") ?>
     <!--  SIDEBAR  -->
 
     <?php foreach($_SESSION["roles"] as $role): ?>
@@ -92,7 +92,7 @@
     <main class="w-[85%]">
 
         <!--  HEADER  -->
-            <?php include("components/header.html") ?>
+            <?php include("components/header.php") ?>
         <!--  HEADER  -->
         <section class="w-full h-[90%] bg-gray-200 flex justify-center items-center">
             <button id="add" type="button" class="w-14 h-[80%] bg-black text-white text-center rounded-l-lg">
@@ -115,6 +115,6 @@
         </section>
     </main>
 </body>
-<script src="../public/assets/javascript/main.js"></script>
-<script src="../public/assets/javascript/account.js"></script>
+<script src="<?= URLROOT . 'public/assets/javascript/main.js'?>"></script>
+<script src="<?= URLROOT . 'public/assets/javascript/account.js'?>"></script>
 </html>

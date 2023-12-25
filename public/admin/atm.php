@@ -1,5 +1,8 @@
 <?php
 
-    require("../app/views/admin/atm.php");
+    require(__DIR__ . "/../../app/config/config.php");
+
+
+    require(APPROOT . "app/views/admin/atm.php");
 
 ?>

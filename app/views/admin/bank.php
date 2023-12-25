@@ -21,7 +21,6 @@
 
     <!--  SIDEBAR  -->
     <?php include("components/sidebar.php") ?>
-
     <!--  SIDEBAR  -->
 
     <?php foreach($_SESSION["roles"] as $role): ?>

@@ -1,7 +1,7 @@
 <?php
 
 require("ITransactionService.php");
-require("Database.php");
+
 
 class TransactionService extends Database implements ITransactionService {
 

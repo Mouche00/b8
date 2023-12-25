@@ -1,7 +1,7 @@
 <?php
 
     require("IServiceAgency.php");
-    require("Database.php");
+    
 
 class ServiceAgency extends Database implements IServiceAgency
 {
@@ -102,12 +102,102 @@ class ServiceAgency extends Database implements IServiceAgency
 
     public function read()
     {
+        $db = $this->connect();
+
+        $searchArray = array();
+        $searchQuery = " ";
+
+
+        $draw = $datatable->draw;
+        $row = $datatable->row;
+        $rowPerPage = $datatable->rowPerPage;
+        $columnName = $datatable->columnName;
+        $columnSortOrder = $datatable->columnSortOrder;
+        $searchValue = $datatable->searchValue;
+
+        if($searchValue != ''){
+            $searchQuery = " AND (id LIKE :id OR 
+                    longitude LIKE :longitude OR 
+                    latitude LIKE :latitude) ";
+            $searchArray = array( 
+                    'id'=>"%$searchValue%",
+                    'longitude'=>"%$searchValue%",
+                    'latitude'=>"%$searchValue%"
+            );
+        }
+
+        try {
+            $stmt = $db->prepare("SELECT COUNT(*) AS allcount FROM agency ");
+            $stmt->execute();
+            $records = $stmt->fetch();
+            $totalRecords = $records['allcount'];
         
+            $stmt = $db->prepare("SELECT COUNT(*) AS allcount FROM agency WHERE 1 ".$searchQuery);
+            $stmt->execute($searchArray);
+            $records = $stmt->fetch();
+            $totalRecordwithFilter = $records['allcount'];
+
+            $stmt = $db->prepare("SELECT * FROM agency WHERE 1 ".$searchQuery." ORDER BY ".$columnName." ".$columnSortOrder." LIMIT :limit,:offset");
+
+            foreach ($searchArray as $key=>$search) {
+                $stmt->bindValue(':'.$key, $search,PDO::PARAM_STR);
+            }
+            
+            $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$rowPerPage, PDO::PARAM_INT);
+            $stmt->execute();
+            $records = $stmt->fetchAll();
+
+        } catch (PDOException $e){
+            die("Error: " . $e->getMessage());
+        }
+
+        $data = array();
+
+        foreach ($records as $row) {
+            $data[] = array(
+                "id"=>$row['id'],
+                "longitude"=>$row['longitude'],
+                "latitude"=>$row['latitude'],
+                "bank_id"=>$row['bank_id'],
+                "address_id"=>$row['address_id']
+            );
+        }
+
+        // Response
+        $response = array(
+            "draw" => intval($draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordwithFilter,
+            "aaData" => $data
+        );
+
+        return $response;
     }
 
     public function delete($agencyId)
     {
-        
+        $db = $this->connect();
+
+        try {
+            $sql = "DELETE FROM agency WHERE id = :id";
+
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(":id", $id);
+
+            $stmt->execute();
+
+            $sql = "DELETE FROM address
+                    JOIN agency ON agency.address_id = address.id
+                    WHERE agency.id = :id";
+
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(":id", $id);
+
+            $stmt->execute();
+        } catch (PDOException $e) {
+            die("Error: " . $e->getMessage());
+        }
     }
 }
 

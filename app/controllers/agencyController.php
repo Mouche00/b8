@@ -1,10 +1,14 @@
 <?php
 
-    require_once(__DIR__ . "/../services/BankService.php");
-    require_once(__DIR__ . "/../models/Bank.php");
-    require_once(__DIR__ . "/../models/Datatable.php");
+    require("../config/config.php");
 
-    $service = new BankService();
+    require(APPROOT . "app/models/Agency.php");
+    require(APPROOT . "app/models/Datatable.php");
+    // require(APPROOT . "app/config/Database.php");
+    require(APPROOT . "app/services/ServiceAgency.php");
+    require(APPROOT . "app/services/BankService.php");
+
+    $agencyService = new ServiceAgency();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -12,34 +16,27 @@
         
         if(isset($_POST['add'])) {
 
-            $valid_extensions = array('jpeg', 'jpg', 'png');
-            $path = __DIR__ . "/../../public/uploads/";
+            $addressId = uniqid(mt_rand(), true);
+            $city = $_POST['city'];
+            $district = $_POST['district'];
+            $street = $_POST['street'];
+            $postalCode = $_POST['postal-code'];
+            $email = $_POST['email'];
+            $telephone = $_POST['telephone'];
 
-            $img = $_FILES['logo']['name'];
-            $tmp = $_FILES['logo']['tmp_name'];
+            // ---------  USER PROPS --------- //
 
-            $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
+            $agencyId = uniqid(mt_rand(), true);
+            $longitude = $_POST['longitude'];
+            $latitude = $_POST['latitude'];
+            $bank_id = $_POST['bank_id'];
 
-            $logo = rand(1000,1000000).$img;
-
-            if(in_array($ext, $valid_extensions)) { 
-                $path = $path.strtolower($logo); 
-                if(move_uploaded_file($tmp,$path)) {
-                    echo "Upload Failed";
-                } else {
-                    echo "Upload Successful";
-                }
-            }
-
-            
-            $id = uniqid(mt_rand(), true);
-            $name = $_POST['name'];
-            $logo = strtolower($logo);
-
-            $bank = new Bank($id, $name, $logo);
+            $address = new Address($addressId, $city, $district, $street, $postalCode, $mail, $telephone);
+            $agency = new Agency($agencyId, $longitude, $latitude, $bank_id, $address);
 
             try{
-                $service->create($bank);
+                $agencyService->create($agency);
+
             } catch (PDOException $e){
                 die("Error: " . $e->getMessage());
             }
@@ -50,33 +47,27 @@
         } else if(isset($_POST['edit'])) {
 
             
-            $valid_extensions = array('jpeg', 'jpg', 'png');
-            $path = __DIR__ . "/../../public/uploads/";
+            $addressId = $_POST['address-id'];
+            $city = $_POST['city'];
+            $district = $_POST['district'];
+            $street = $_POST['street'];
+            $postalCode = $_POST['postal-code'];
+            $email = $_POST['email'];
+            $telephone = $_POST['telephone'];
 
-            $img = $_FILES['logo']['name'];
-            $tmp = $_FILES['logo']['tmp_name'];
+            // ---------  USER PROPS --------- //
 
-            $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
+            $agencyId = $_POST['agency-id'];
+            $longitude = $_POST['longitude'];
+            $latitude = $_POST['latitude'];
+            $bank_id = $_POST['bank_id'];
 
-            $logo = rand(1000,1000000).$img;
-
-            if(in_array($ext, $valid_extensions)) { 
-                $path = $path.strtolower($logo); 
-                if(move_uploaded_file($tmp,$path)) {
-                    echo "Upload Failed";
-                } else {
-                    echo "Upload Successful";
-                }
-            }
-
-            $id = $_POST['id'];
-            $name = $_POST['name'];
-            $logo = strtolower($logo);
-
-            $bank = new Bank($id, $name, $logo);
+            $address = new Address($addressId, $city, $district, $street, $postalCode, $mail, $telephone);
+            $agency = new Agency($agencyId, $longitude, $latitude, $bank_id, $address);
 
             try{
-                $service->update($bank);
+                $agencyService->update($agency);
+
             } catch (PDOException $e){
                 die("Error: " . $e->getMessage());
             }
@@ -103,7 +94,7 @@
             $datatable->columnSortOrder = $columnSortOrder;
             $datatable->searchValue = $searchValue;
 
-            $response = $service->read($datatable);
+            $response = $agencyService->read($datatable);
 
             echo json_encode($response);
 
@@ -114,28 +105,36 @@
 
     if($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        if(isset($_GET['delete'])) {
-
+        if (isset($_GET['delete'])) {
+    
             if(isset($_GET['id'])) {
-
+    
                 $id = $_GET['id'];
-                $service->delete($id);
-
+    
+                $agencyService->delete($id);
             }
-
+    
         } else if (isset($_GET['edit'])) {
-            
+                
             if(isset($_GET['id'])) {
-
+    
                 $id = $_GET['id'];
-                $data = $service->search($id);
-
+                $data = $agencyService->search($id);
+    
                 echo json_encode($data);
-
+    
             }
+    
+        } else if (isset($_GET['get'])) {
 
+            $bankService = new BankService();
+    
+            $data = $bankService->read();
+            echo json_encode($data);
+    
+    
         }
-
+    
     }
 
 ?>

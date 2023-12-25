@@ -1,11 +1,11 @@
 <?php
 
     require("IAccountService.php");
-    require("Database.php");
+    
 
     class AccountService extends Database implements IAccountService {
 
-        public function create(Account $account) {
+        public function create(CheckingAccount $account) {
 
             $db=$this->connect();
             if ($db == null) {
@@ -38,26 +38,85 @@
 
         }
 
-        public function read(){
+        public function read(Datatable $datatable){
 
             $db = $this->connect();
-            if ($db == null) {
-                return null;
+
+            $searchArray = array();
+            $searchQuery = " ";
+
+            $draw = $datatable->draw;
+            $row = $datatable->row;
+            $rowPerPage = $datatable->rowPerPage;
+            $columnName = $datatable->columnName;
+            $columnSortOrder = $datatable->columnSortOrder;
+            $searchValue = $datatable->searchValue;
+
+            if($searchValue != ''){
+                $searchQuery = " AND (id LIKE :id OR 
+                        rib LIKE :rib OR 
+                        currency LIKE :currency OR 
+                        balance LIKE :balance OR 
+                        user_id LIKE :user_id) ";
+                $searchArray = array( 
+                        'id'=>"%$searchValue%",
+                        'rib'=>"%$searchValue%",
+                        'currency'=>"%$searchValue%",
+                        'balance'=>"%$searchValue%",
+                        'user_id'=>"%$searchValue%"
+                );
+            }
+    
+            try {
+                $stmt = $db->prepare("SELECT COUNT(*) AS allcount FROM account");
+                $stmt->execute();
+                $records = $stmt->fetch();
+                $totalRecords = $records['allcount'];
+            
+                $stmt = $db->prepare("SELECT COUNT(*) AS allcount FROM account WHERE 1 ".$searchQuery);
+                $stmt->execute($searchArray);
+                $records = $stmt->fetch();
+                $totalRecordwithFilter = $records['allcount'];
+
+                $stmt = $db->prepare("SELECT * FROM account WHERE 1 ".$searchQuery." ORDER BY ".$columnName." ".$columnSortOrder." LIMIT :limit,:offset");
+
+                foreach ($searchArray as $key=>$search) {
+                    $stmt->bindValue(':'.$key, $search,PDO::PARAM_STR);
+                }
+
+                $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', (int)$rowPerPage, PDO::PARAM_INT);
+                $stmt->execute();
+                $records = $stmt->fetchAll();
+
+            } catch (PDOException $e){
+                die("Error: " . $e->getMessage());
             }
 
-            $sql = "SELECT * FROM account";
-            $stmt = $db->query($sql);
-            $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            $db = null;
-            $stmt = null;
+            $data = array();
 
-            return $accounts;
+            foreach ($records as $row) {
+                $data[] = array(
+                    "id"=>$row['id'],
+                    "rib"=>$row['rib'],
+                    "currency"=>$row['currency'],
+                    "balance"=>$row['balance'],
+                    "user_id"=>$row['user_id']
+                );
+            }
 
+            // Response
+            $response = array(
+                "draw" => intval($draw),
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecordwithFilter,
+                "aaData" => $data
+            );
 
+            return $response;
         }
 
-        public function update(Account $account) {
+        public function update(CheckingAccount $account) {
             $db = $this->connect();
             if ($db == null) {
                 return null;

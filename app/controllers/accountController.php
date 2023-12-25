@@ -1,45 +1,35 @@
 <?php
 
-    require_once(__DIR__ . "/../services/BankService.php");
-    require_once(__DIR__ . "/../models/Bank.php");
-    require_once(__DIR__ . "/../models/Datatable.php");
+require("../config/config.php");
 
-    $service = new BankService();
+require(APPROOT . "app/models/Account.php");
+require(APPROOT . "app/models/CheckingAccount.php");
+require(APPROOT . "app/models/Datatable.php");
+// require(APPROOT . "app/config/Database.php");
+require(APPROOT . "app/services/AccountService.php");
+require(APPROOT . "app/services/UserService.php");
+
+$accountService = new AccountService();
+$userService = new UserService();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // ---------  ADD --------- //
         
         if(isset($_POST['add'])) {
-
-            $valid_extensions = array('jpeg', 'jpg', 'png');
-            $path = __DIR__ . "/../../public/uploads/";
-
-            $img = $_FILES['logo']['name'];
-            $tmp = $_FILES['logo']['tmp_name'];
-
-            $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
-
-            $logo = rand(1000,1000000).$img;
-
-            if(in_array($ext, $valid_extensions)) { 
-                $path = $path.strtolower($logo); 
-                if(move_uploaded_file($tmp,$path)) {
-                    echo "Upload Failed";
-                } else {
-                    echo "Upload Successful";
-                }
-            }
-
-            
+          
             $id = uniqid(mt_rand(), true);
-            $name = $_POST['name'];
-            $logo = strtolower($logo);
+            $rib = $_POST['rib'];
+            $currency = $_POST['currency'];
+            $balance = $_POST['balance'];
+            $userId = $_POST['user_id'];
 
-            $bank = new Bank($id, $name, $logo);
+            $checkingAccount = new CheckingAccount($id, $rib, $currency, $balance, $userId);
+
+            print_r($checkingAccount);
 
             try{
-                $service->create($bank);
+                $accountService->create($checkingAccount);
             } catch (PDOException $e){
                 die("Error: " . $e->getMessage());
             }
@@ -50,33 +40,16 @@
         } else if(isset($_POST['edit'])) {
 
             
-            $valid_extensions = array('jpeg', 'jpg', 'png');
-            $path = __DIR__ . "/../../public/uploads/";
-
-            $img = $_FILES['logo']['name'];
-            $tmp = $_FILES['logo']['tmp_name'];
-
-            $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
-
-            $logo = rand(1000,1000000).$img;
-
-            if(in_array($ext, $valid_extensions)) { 
-                $path = $path.strtolower($logo); 
-                if(move_uploaded_file($tmp,$path)) {
-                    echo "Upload Failed";
-                } else {
-                    echo "Upload Successful";
-                }
-            }
-
             $id = $_POST['id'];
-            $name = $_POST['name'];
-            $logo = strtolower($logo);
+            $rib = $_POST['rib'];
+            $currency = $_POST['currency'];
+            $balance = $_POST['balance'];
+            $userId = $_POST['user_id'];
 
-            $bank = new Bank($id, $name, $logo);
+            $checkingAccount = new CheckingAccount($id, $rib, $currency, $balance, $userId);
 
             try{
-                $service->update($bank);
+                $accountService->create($checkingAccount);
             } catch (PDOException $e){
                 die("Error: " . $e->getMessage());
             }
@@ -103,7 +76,7 @@
             $datatable->columnSortOrder = $columnSortOrder;
             $datatable->searchValue = $searchValue;
 
-            $response = $service->read($datatable);
+            $response = $accountService->read($datatable);
 
             echo json_encode($response);
 
@@ -134,6 +107,12 @@
 
             }
 
+        } else if (isset($_GET['get'])) {
+    
+            $data = $userService->display();
+            echo json_encode($data);
+    
+    
         }
 
     }

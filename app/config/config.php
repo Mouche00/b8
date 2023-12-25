@@ -8,5 +8,7 @@
     define("APPROOT", $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/b8/");
     define("URLROOT", "http://localhost/~ycode/b8/");
 
+    require("Database.php");
+
 
 ?>

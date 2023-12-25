@@ -1,7 +1,5 @@
 <?php
 
-    require(__DIR__ . "/../config/config.php");
-
     class Database {
 
         public function connect() {
